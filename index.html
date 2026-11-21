@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dr. Salih’s Dentpark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--black:#05070c;--navy:#0a1428;--navy2:#0e1d3a;--blue:#2f7bff;--white:#fff;--silver:#c9d2e0;--mut:#8f9bb0;--ease:cubic-bezier(.22,1,.36,1);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{background:var(--black);color:var(--white);font:400 16px/1.65 Manrope,system-ui,sans-serif;overflow-x:hidden}
+h1,h2,h3{font-family:Newsreader,Georgia,serif;font-weight:400;line-height:1.08;letter-spacing:-.01em}
+a{color:inherit;text-decoration:none}
+.wrap{width:min(1180px,100% - 40px);margin-inline:auto}
+section{padding:110px 0}
+h2{font-size:clamp(34px,5vw,56px);margin-bottom:14px}
+.lead{color:var(--mut);max-width:56ch}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+/* cursor */
+html.fx,html.fx a,html.fx button{cursor:none}
+#cur{position:fixed;inset:0;pointer-events:none;z-index:9999}
+#cur i{position:fixed;top:0;left:0;border-radius:50%;will-change:transform}
+.ring{width:38px;height:38px;margin:-19px 0 0 -19px;border:1.5px solid var(--blue);box-shadow:0 0 14px rgba(47,123,255,.55);transition:width .25s,height .25s,margin .25s,background .25s}
+.ring.hot{width:62px;height:62px;margin:-31px 0 0 -31px;background:rgba(47,123,255,.13)}
+.ring.view{width:78px;height:78px;margin:-39px 0 0 -39px;border-color:var(--silver);background:rgba(255,255,255,.06)}
+.dot{width:6px;height:6px;margin:-3px 0 0 -3px;background:#fff}
+.tr{width:14px;height:14px;margin:-7px 0 0 -7px;background:var(--blue);filter:blur(3px)}
+[data-spot]{position:relative;isolation:isolate}
+[data-spot]::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(520px circle at var(--mx,50%) var(--my,35%),rgba(47,123,255,.15),transparent 62%)}
+
+/* loader */
+#load{position:fixed;inset:0;z-index:10000;display:grid;place-content:center;justify-items:center;gap:20px;background:var(--black);transition:opacity .7s,visibility .7s}
+#load.off{opacity:0;visibility:hidden}
+#load{animation:lo .6s 3.5s forwards}@keyframes lo{to{opacity:0;visibility:hidden}}
+#load b{font:400 30px Newsreader,serif}
+#load span{width:140px;height:2px;background:rgba(201,210,224,.15);overflow:hidden;position:relative}
+#load span::after{content:"";position:absolute;inset:0;background:var(--blue);transform:translateX(-100%);animation:bar 1.1s ease-in-out infinite}
+@keyframes bar{to{transform:translateX(100%)}}
+
+/* nav */
+nav{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:100;transition:background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent}
+nav.s{background:rgba(5,7,12,.78);backdrop-filter:blur(14px);border-color:rgba(201,210,224,.1)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{font:500 21px Newsreader,serif}.logo em{color:var(--blue);font-style:normal}
+.links{display:flex;gap:30px;font-size:14px;color:var(--silver)}
+.links a{position:relative;padding:4px 0}
+.links a::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:100%;background:var(--blue);transform:scaleX(0);transform-origin:right;transition:transform .45s var(--ease)}
+.links a:hover::after{transform:scaleX(1);transform-origin:left}
+.btn{display:inline-block;border:1px solid var(--blue);background:var(--blue);color:#fff;padding:14px 26px;border-radius:999px;font:700 14px Manrope,sans-serif;transition:box-shadow .3s,background .3s}
+.btn:hover{box-shadow:0 0 34px -4px rgba(47,123,255,.8)}
+.btn.ghost{background:transparent;border-color:rgba(201,210,224,.35)}
+.btn.ghost:hover{border-color:var(--blue);box-shadow:none;background:rgba(47,123,255,.1)}
+.mag{display:inline-block;will-change:transform}
+.burger{display:none;background:none;border:0;color:#fff;font-size:26px}
+
+/* hero */
+#hero{min-height:100svh;padding:0;display:flex;align-items:center;overflow:hidden}
+.slides{position:absolute;inset:0;z-index:-2}
+.slide{position:absolute;inset:-4%;opacity:0;transition:opacity 1.6s;overflow:hidden}
+.slide.on{opacity:1}
+.slide>div{position:absolute;inset:0;transform:scale(1.14);transition:transform 8s linear}
+.slide.on>div{transform:scale(1)}
+.slide:nth-child(1)>div{background:radial-gradient(60% 70% at 78% 40%,#1b4fb8 0,transparent 65%),linear-gradient(135deg,#0a1428,#05070c)}
+.slide:nth-child(2)>div{background:radial-gradient(55% 65% at 70% 60%,#2f7bff55 0,transparent 65%),radial-gradient(40% 50% at 90% 15%,#c9d2e033 0,transparent 70%),linear-gradient(160deg,#0e1d3a,#05070c)}
+.slide:nth-child(3)>div{background:radial-gradient(60% 60% at 85% 50%,#245fd0 0,transparent 65%),linear-gradient(200deg,#0a1428,#05070c)}
+.layer{position:absolute;inset:0;z-index:-1;pointer-events:none;transform:translate3d(calc(var(--hx,0)*var(--d)*-1px),calc(var(--hy,0)*var(--d)*-1px),0)}
+.orb{position:absolute;border-radius:50%;filter:blur(50px);background:rgba(47,123,255,.28)}
+.tooth{position:absolute;right:9%;top:50%;width:min(36vw,440px);translate:0 -50%;opacity:.9}
+.hero-in{padding-top:90px;max-width:700px;margin-left:max(20px,calc(50% - 590px));margin-right:auto}
+.hero-in h1{font-size:clamp(46px,8vw,92px);margin-bottom:22px}
+.hero-in h1 span{display:inline-block;opacity:0;transform:translateY(40px);filter:blur(8px);animation:w 1s var(--ease) forwards}
+@keyframes w{to{opacity:1;transform:none;filter:none}}
+.hero-in p{color:var(--silver);font-size:18px;max-width:52ch;margin-bottom:34px;opacity:0;animation:w 1s 1.2s var(--ease) forwards}
+.cta{display:flex;gap:14px;flex-wrap:wrap;opacity:0;animation:w 1s 1.5s var(--ease) forwards}
+.dots{position:absolute;bottom:34px;left:50%;translate:-50%;display:flex;gap:8px}
+.dots button{width:26px;height:2px;border:0;background:rgba(201,210,224,.3);padding:0}
+.dots button.on{background:var(--blue)}
+
+/* stats */
+#stats{padding:60px 0;background:rgba(10,20,40,.55);backdrop-filter:blur(6px);border-block:1px solid rgba(201,210,224,.08)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
+.stats b{display:block;font:400 clamp(38px,5vw,60px) Newsreader,serif}
+.stats span{color:var(--mut);font-size:14px}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(30px);filter:blur(8px);transition:opacity .9s var(--ease),transform .9s var(--ease),filter .9s var(--ease);transition-delay:calc(var(--i,0)*70ms)}
+.rv.in{opacity:1;transform:none;filter:none}
+
+/* treatments */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;margin-top:50px}
+.card{position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(160deg,var(--navy2),var(--black));border:1px solid rgba(201,210,224,.12);
+transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .5s var(--ease),border-color .3s,box-shadow .3s}
+.card:hover{border-color:rgba(47,123,255,.6);box-shadow:0 24px 60px -26px rgba(47,123,255,.5)}
+.card .glow{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(240px circle at var(--sx,50%) var(--sy,50%),rgba(47,123,255,.28),transparent 65%)}
+.card:hover .glow{opacity:1}
+.media{height:170px;position:relative;overflow:hidden}
+.media i{display:block;height:100%;background:radial-gradient(70% 90% at var(--p,30%) 20%,hsl(var(--h) 90% 55%/.55),transparent 70%),var(--navy);transition:transform .9s var(--ease)}
+.card:hover .media i{transform:scale(1.12)}
+.card .body{position:relative;z-index:3;padding:20px 22px 24px;transform:translate3d(var(--px,0),var(--py,0),0);transition:transform .5s var(--ease)}
+.card h3{font-size:23px;margin-bottom:6px}
+.card p{font-size:14px;color:var(--mut)}
+
+/* doctors */
+#doctors{background:linear-gradient(180deg,rgba(10,20,40,.7),rgba(14,29,58,.4))}
+#treatments{background:radial-gradient(80% 45% at 50% 0,rgba(47,123,255,.12),transparent 70%)}
+#reviews{background:radial-gradient(70% 50% at 20% 100%,rgba(47,123,255,.12),transparent 70%)}
+.docs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,320px));gap:24px;margin-top:50px}
+.doc .pic{height:280px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(160deg,#16305f,var(--navy2))}
+.doc .pic svg{width:46%;opacity:.55;transition:transform .9s var(--ease)}
+.doc:hover .pic svg{transform:scale(1.12)}
+.doc .body{padding:22px 24px 26px}
+.doc small{color:var(--blue);font-weight:700;font-size:13px}
+
+/* gallery */
+.gal{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:50px}
+.gal button{aspect-ratio:1;border:0;border-radius:14px;overflow:hidden;padding:0;background:var(--navy2)}
+.gal i{display:block;height:100%;background:radial-gradient(80% 80% at 30% 25%,hsl(var(--h) 85% 55%/.55),transparent 70%),var(--navy);transition:transform .9s var(--ease)}
+.gal button:hover i{transform:scale(1.1)}
+#lb{position:fixed;inset:0;z-index:9000;display:grid;place-items:center;background:rgba(5,7,12,.92);backdrop-filter:blur(10px);opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
+#lb.on{opacity:1;visibility:visible}
+#lb i{width:min(80vw,640px);aspect-ratio:4/3;border-radius:18px;transform:scale(.9);transition:transform .6s var(--ease)}
+#lb.on i{transform:none}
+#lb button{position:absolute;top:calc(20px + env(safe-area-inset-top,0px));right:22px;background:none;border:0;color:#fff;font-size:34px}
+
+/* appointment */
+.book{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+form{display:grid;gap:14px}
+input,select,textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(201,210,224,.2);border-radius:12px;color:#fff;padding:14px 16px;font:inherit;transition:border-color .3s,box-shadow .3s}
+select option{background:var(--navy)}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,123,255,.2)}
+#ok{display:none;color:var(--silver);font-size:14px}
+footer{padding:44px 0 90px;border-top:1px solid rgba(201,210,224,.1);color:var(--mut);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+/* hero dental scene */
+.tooth{display:none}
+.scene{position:absolute;right:7%;top:50%;width:min(44vw,560px);aspect-ratio:1;translate:0 -50%}
+.scene .sv{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.sglow{position:absolute;inset:14%;border-radius:50%;background:radial-gradient(circle,rgba(47,123,255,.45),transparent 65%);animation:pu 5s ease-in-out infinite}
+@keyframes pu{50%{transform:scale(1.15);opacity:.7}}
+.spin{transform-box:view-box;transform-origin:50% 50%;animation:rot 40s linear infinite}
+.spin.r{animation-duration:28s;animation-direction:reverse}
+@keyframes rot{to{transform:rotate(360deg)}}
+.bob{animation:bb 6s ease-in-out infinite}
+@keyframes bb{50%{transform:translateY(-10px)}}
+.tw{transform-box:fill-box;transform-origin:center;animation:tk 3.2s ease-in-out infinite}
+@keyframes tk{50%{opacity:.2;transform:scale(.6)}}
+.fi{position:absolute;width:var(--w);padding:12px;border-radius:18px;background:rgba(47,123,255,.08);border:1px solid rgba(201,210,224,.18);backdrop-filter:blur(4px);animation:fl 7s ease-in-out infinite;animation-delay:var(--dl)}
+.fi svg{display:block;width:100%;fill:none;stroke:#c9d2e0;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+@keyframes fl{50%{translate:0 -14px}}
+#hero.photo .scene{display:none}
+@media(max-width:860px){.scene{opacity:.35;right:-22%;width:92vw}.fi{display:none}}
+@media(prefers-reduced-motion:reduce){.scene *,.sglow,.fi,#bg i{animation:none!important}}
+
+/* hero photo mode */
+#hero.photo .slide>div{background-size:cover;background-position:center}
+#hero.photo .slides::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,7,12,.93) 0,rgba(5,7,12,.72) 45%,rgba(10,30,70,.35)),linear-gradient(0deg,#05070c,transparent 30%)}
+#hero.photo .tooth{display:none}
+
+/* ambient background + treatment art */
+#bg{position:fixed;inset:0;z-index:-3;overflow:hidden;pointer-events:none;background:linear-gradient(180deg,#05070c,#07101f 50%,#05070c)}
+#bg::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(201,210,224,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(201,210,224,.05) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(75% 65% at 50% 40%,#000,transparent);mask-image:radial-gradient(75% 65% at 50% 40%,#000,transparent)}
+#bg i{position:absolute;border-radius:50%;filter:blur(90px);will-change:transform;transform:translate3d(calc(var(--gx,0)*var(--k)*1px),calc(var(--gy,0)*var(--k)*1px),0)}
+#bg i:nth-child(1){width:560px;height:560px;left:-140px;top:4%;background:rgba(47,123,255,.22);animation:dr 26s ease-in-out infinite alternate}
+#bg i:nth-child(2){width:480px;height:480px;right:-120px;top:38%;background:rgba(30,90,220,.2);animation:dr 32s ease-in-out infinite alternate-reverse}
+#bg i:nth-child(3){width:420px;height:420px;left:35%;bottom:-160px;background:rgba(201,210,224,.1);animation:dr 38s ease-in-out infinite alternate}
+@keyframes dr{to{translate:90px 60px}}
+.media i{position:absolute;inset:0}
+.art{position:absolute;inset:0;width:100%;height:100%;padding:14px;fill:none;stroke:#c9d2e0;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;transition:transform .9s var(--ease),filter .6s}
+.card:hover .art{transform:scale(1.1);filter:drop-shadow(0 0 10px rgba(47,123,255,.6))}
+.media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .9s var(--ease)}
+.card:hover .media img{transform:scale(1.1)}
+
+/* hours + reviews */
+.hrs{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+#hl{list-style:none;padding:0;display:grid;gap:2px}
+#hl li{display:flex;justify-content:space-between;gap:16px;padding:14px 18px;border-radius:12px;color:var(--silver);border:1px solid transparent}
+#hl li.today{background:rgba(47,123,255,.1);border-color:rgba(47,123,255,.45);color:#fff}
+#state{display:flex;align-items:center;gap:10px;font-weight:700;margin-top:22px}
+.pill{width:10px;height:10px;border-radius:50%;background:#7b8599}
+.pill.on{background:#27c46b;box-shadow:0 0 12px #27c46b}
+.note{color:var(--mut);font-size:12px;margin-top:14px}
+.sum{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:10px 0 34px}
+.sum b{font:400 56px Newsreader,serif}
+#stars{color:#f5b942;letter-spacing:3px}
+.sum small{color:var(--mut)}
+.rvw{max-width:720px;margin-bottom:30px}
+#rc{padding:30px;border-radius:18px;background:linear-gradient(160deg,var(--navy2),var(--black));border:1px solid rgba(201,210,224,.12);min-height:200px;animation:fi .7s var(--ease)}
+@keyframes fi{from{opacity:0;transform:translateY(10px)}}
+#rc .st{color:#f5b942;letter-spacing:3px;margin-bottom:12px}
+#rc p{font:italic 400 22px/1.45 Newsreader,serif;margin-bottom:16px}
+#rc small{color:var(--mut)}
+.rnav{display:flex;gap:10px;margin-top:14px}
+.rnav button{width:44px;height:44px;border-radius:50%;border:1px solid rgba(201,210,224,.3);background:none;color:#fff;font-size:18px;transition:border-color .3s}
+.rnav button:hover{border-color:var(--blue)}
+.call-fab{background:var(--blue);box-shadow:0 10px 30px -10px rgba(47,123,255,.7)}
+@media(max-width:860px){.hrs{grid-template-columns:1fr;gap:30px}}
+
+/* floaters */
+.fl{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:900;display:flex;flex-direction:column;gap:12px;align-items:flex-end}
+.fab{border:0;border-radius:999px;padding:12px 18px;font:700 14px Manrope,sans-serif;color:#fff;transition:transform .3s,opacity .3s}
+.fab:hover{transform:translateY(-2px)}
+#top{background:rgba(10,20,40,.9);border:1px solid rgba(201,210,224,.25);opacity:0;pointer-events:none}
+#top.on{opacity:1;pointer-events:auto}
+.wa{background:#1fa855;box-shadow:0 10px 30px -10px rgba(31,168,85,.7)}
+
+@media(max-width:860px){
+.links{display:none;position:absolute;top:72px;left:0;right:0;flex-direction:column;gap:0;background:rgba(5,7,12,.97);padding:10px 20px 20px}
+.links.open{display:flex}.links a{padding:14px 0}.burger{display:block}
+.stats{grid-template-columns:1fr 1fr}.gal{grid-template-columns:1fr 1fr}.book{grid-template-columns:1fr;gap:36px}
+.tooth{opacity:.25;right:-10%;width:70vw}section{padding:80px 0}nav .btn.d{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}.rv{opacity:1;transform:none;filter:none}.hero-in h1 span,.hero-in p,.cta{opacity:1;transform:none;filter:none}}
+</style>
+</head>
+<body>
+<div id="load" role="status" aria-label="Loading"><b>Dr. Salih’s Dentpark</b><span></span></div>
+<div id="cur" aria-hidden="true"></div>
+<div id="bg" aria-hidden="true"><i style="--k:-50"></i><i style="--k:-80"></i><i style="--k:-30"></i></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tp" viewBox="0 0 200 240"><path d="M100 14c-22-14-70-8-74 38-3 34 14 52 18 86 3 28 8 78 24 78 14 0 12-48 32-48s18 48 32 48c16 0 21-50 24-78 4-34 21-52 18-86-4-46-52-52-74-38z"/></symbol></svg>
+
+<nav id="nav"><div class="wrap">
+<a href="#hero" class="logo">Dr. Salih’s <em>Dentpark</em></a>
+<div class="links" id="links"><a href="#treatments">Treatments</a><a href="#doctors">Doctors</a><a href="#gallery">Gallery</a><a href="#hours">Hours</a><a href="#reviews">Reviews</a><a href="#book">Appointment</a></div>
+<span class="mag"><a class="btn ghost" data-call href="#book">Call</a></span><span class="mag"><a class="btn d" href="#book">Book now</a></span>
+<button class="burger" id="burger" aria-label="Menu">≡</button>
+</div></nav>
+
+<header id="hero" data-spot>
+<div class="slides"><div class="slide on"><div></div></div><div class="slide"><div></div></div><div class="slide"><div></div></div></div>
+<div class="layer" style="--d:26"><span class="orb" style="width:340px;height:340px;right:6%;top:12%"></span></div>
+<div class="layer" style="--d:12"><span class="orb" style="width:200px;height:200px;left:8%;bottom:14%;background:rgba(201,210,224,.1)"></span>
+<svg class="tooth" viewBox="0 0 200 240" fill="none" stroke="#c9d2e0" stroke-width="1.2"><path d="M100 14c-22-14-70-8-74 38-3 34 14 52 18 86 3 28 8 78 24 78 14 0 12-48 32-48s18 48 32 48c16 0 21-50 24-78 4-34 21-52 18-86-4-46-52-52-74-38z"/><path d="M62 60c10-14 30-16 44-8" stroke="#2f7bff" stroke-width="2"/></svg></div>
+<div class="layer" style="--d:18"><div class="scene">
+<span class="sglow"></span>
+<svg class="sv" viewBox="0 0 400 400" fill="none" stroke="#c9d2e0" aria-hidden="true">
+<defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f7bff" stop-opacity=".4"/><stop offset="1" stop-color="#2f7bff" stop-opacity=".03"/></linearGradient></defs>
+<g class="spin"><circle cx="200" cy="200" r="190" stroke-opacity=".25" stroke-dasharray="3 9"/><circle cx="390" cy="200" r="5" fill="#2f7bff" stroke="none"/></g>
+<g class="spin r"><circle cx="200" cy="200" r="150" stroke="#2f7bff" stroke-opacity=".35"/><circle cx="200" cy="50" r="4" fill="#c9d2e0" stroke="none"/></g>
+<g class="bob"><use href="#tp" x="112" y="84" width="176" height="211" fill="url(#tg)" stroke="#c9d2e0" stroke-width="3"/><path d="M166 137c9-12 26-14 39-7" stroke="#2f7bff" stroke-width="5" stroke-linecap="round"/></g>
+<path class="tw" d="M70 90v22M59 101h22" stroke="#2f7bff" stroke-width="2"/>
+<path class="tw" style="animation-delay:1s" d="M330 120v18M321 129h18" stroke="#c9d2e0" stroke-width="2"/>
+<path class="tw" style="animation-delay:2s" d="M320 320v22M309 331h22" stroke="#2f7bff" stroke-width="2"/>
+<path class="tw" style="animation-delay:.5s" d="M80 300v16M72 308h16" stroke="#c9d2e0" stroke-width="2"/>
+</svg>
+<div class="fi" style="--w:96px;top:4%;left:0;--dl:0s;rotate:-18deg"><svg viewBox="0 0 120 40"><rect x="4" y="16" width="80" height="8" rx="4"/><rect x="84" y="12" width="30" height="16" rx="4" stroke="#2f7bff"/><path d="M90 12V5M98 12V5M106 12V5" stroke="#2f7bff"/></svg></div>
+<div class="fi" style="--w:70px;top:68%;left:2%;--dl:1.5s"><svg viewBox="0 0 100 100"><circle cx="66" cy="34" r="22" stroke="#2f7bff"/><path d="M50 50L12 90"/></svg></div>
+<div class="fi" style="--w:66px;top:8%;right:2%;--dl:3s"><svg viewBox="0 0 60 70"><path d="M30 4l24 8v22c0 18-12 30-24 34C18 64 6 52 6 34V12z"/><path d="M18 36l9 9 16-18" stroke="#2f7bff"/></svg></div>
+<div class="fi" style="--w:64px;top:72%;right:4%;--dl:2s"><svg viewBox="0 0 200 240" stroke-width="7"><use href="#tp"/></svg></div>
+</div></div>
+<div class="wrap hero-in">
+<h1 id="h1">Your Smile Deserves the Best Care.</h1>
+<p>Experience advanced dental care, modern technology, and personalized treatment designed around your smile.</p>
+<div class="cta"><span class="mag"><a class="btn" href="#book">Book an appointment</a></span><span class="mag"><a class="btn ghost" href="#treatments">Explore treatments</a></span><span class="mag"><a class="btn ghost" data-call href="#book">Call us</a></span></div>
+</div>
+<div class="dots" id="dots"><button class="on" aria-label="Slide 1"></button><button aria-label="Slide 2"></button><button aria-label="Slide 3"></button></div>
+</header>
+
+<div id="stats"><div class="wrap stats">
+<div class="rv"><b><span data-n="15" data-s="+">0</span></b><span>Years of practice</span></div>
+<div class="rv" style="--i:1"><b><span data-n="10000" data-s="+">0</span></b><span>Smiles treated</span></div>
+<div class="rv" style="--i:2"><b><span data-n="10" data-s="">0</span></b><span>Specialised treatments</span></div>
+<div class="rv" style="--i:3"><b><span data-n="98" data-s="%">0</span></b><span>Patient satisfaction</span></div>
+</div><div class="wrap" style="text-align:center;margin-top:14px;color:var(--mut);font-size:12px">Placeholder figures. Replace with the clinic’s real numbers.</div></div>
+
+<section id="treatments" data-spot><div class="wrap">
+<h2 class="rv">Treatments, tailored to you.</h2>
+<p class="lead rv" style="--i:1">From a routine fix to a full smile makeover, every plan starts with listening.</p>
+<div class="grid" id="tgrid"></div>
+</div></section>
+
+<section id="doctors"><div class="wrap">
+<h2 class="rv">Meet your dentists.</h2>
+<div class="docs">
+<div class="card doc rv"><span class="glow"></span><div class="pic"><svg viewBox="0 0 100 120" fill="none" stroke="#c9d2e0" stroke-width="1.4"><circle cx="50" cy="34" r="20"/><path d="M12 116c0-30 18-44 38-44s38 14 38 44"/></svg></div><div class="body"><small>Lead dentist</small><h3>Dr. Salih</h3><p>Add qualifications and specialities here.</p></div></div>
+<div class="card doc rv" style="--i:1"><span class="glow"></span><div class="pic"><svg viewBox="0 0 100 120" fill="none" stroke="#c9d2e0" stroke-width="1.4"><circle cx="50" cy="34" r="20"/><path d="M12 116c0-30 18-44 38-44s38 14 38 44"/></svg></div><div class="body"><small>Specialist</small><h3>Doctor name</h3><p>Add qualifications and specialities here.</p></div></div>
+</div></div></section>
+
+<section id="gallery"><div class="wrap">
+<h2 class="rv">Inside the clinic.</h2>
+<p class="lead rv" style="--i:1">Swap these tiles for your own clinic and smile photos.</p>
+<div class="gal" id="gal"></div>
+</div></section>
+
+<section id="hours"><div class="wrap hrs">
+<div><h2 class="rv">Working hours.</h2><p class="lead rv" style="--i:1">Plan your visit around a time that suits you.</p><p id="state" class="rv" style="--i:2"></p></div>
+<ul id="hl" class="rv" style="--i:2"></ul>
+</div><div class="wrap note">Placeholder hours. Edit CONFIG.hours in the script to match the clinic.</div></section>
+
+<section id="reviews" data-spot><div class="wrap">
+<h2 class="rv">What patients say.</h2>
+<div class="sum rv" style="--i:1"><b id="avg"></b><span id="stars"></span><small id="cnt"></small></div>
+<div class="rvw rv" style="--i:2"><article id="rc"></article><div class="rnav"><button id="rp" aria-label="Previous review">←</button><button id="rn" aria-label="Next review">→</button></div></div>
+<span class="mag"><a class="btn ghost" id="wr" target="_blank" rel="noopener noreferrer" href="#reviews">Write a review on Google</a></span>
+<p class="note">Sample rating and reviews. Replace them in the script with real ones.</p>
+</div></section>
+
+<section id="book" data-spot><div class="wrap book">
+<div><h2 class="rv">Book your visit.</h2><p class="lead rv" style="--i:1">Tell us what you need and the team will confirm a time with you.</p></div>
+<form id="f" class="rv" style="--i:2">
+<input name="name" placeholder="Full name" required autocomplete="name">
+<input name="phone" type="tel" placeholder="Phone number" required autocomplete="tel">
+<select name="t" id="tsel" required><option value="">Choose a treatment</option></select>
+<input name="d" type="date">
+<textarea name="m" rows="3" placeholder="Anything we should know?"></textarea>
+<span class="mag"><button class="btn" type="submit">Request appointment</button></span>
+<p id="ok">Demo only: this form isn’t connected to a booking system yet.</p>
+</form>
+</div></section>
+
+<footer><div class="wrap"><span>© Dr. Salih’s Dentpark</span><span>Address and phone: add clinic details here</span></div></footer>
+
+<div id="lb" role="dialog" aria-modal="true"><button aria-label="Close">×</button><i></i></div>
+<div class="fl"><button class="fab" id="top" aria-label="Back to top">↑</button><a class="fab call-fab" data-call href="#book">Call</a><a class="fab wa" href="#" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">WhatsApp</a></div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fine=matchMedia('(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference)').matches;
+const lerp=(a,b,t)=>a+(b-a)*t;
+// headline words
+$('#h1').innerHTML=$('#h1').textContent.split(' ').map((w,i)=>`<span style="animation-delay:${.35+i*.09}s">${w}</span>`).join(' ');
+// treatments
+// treatment art. To use your own images, list file paths or URLs here in treatment order, e.g. const IMG=['implants.jpg','smile.jpg',...]
+const U=(x,y,w)=>`<use href='#tp' x='${x}' y='${y}' width='${w}' height='${w*1.2}' stroke-width='4'/>`;
+const B="stroke='#2f7bff'";
+const ART=[
+U(56,6,48)+`<path ${B} d='M72 72h16l-2 34h-12zM70 82h20M71 90h18M72 98h16'/>`,
+`<path d='M24 48q56 64 112 0q-56 22-112 0z'/><path ${B} d='M52 62v14M66 66v16M80 68v18M94 66v16M108 62v14M128 14v20M118 24h20'/>`,
+U(52,22,56)+`<path ${B} d='M24 30v14M17 37h14M132 24v10M127 29h10M128 80v14M121 87h14'/>`,
+U(52,10,56)+`<path ${B} stroke-width='2' d='M72 50l-2 24M88 50l2 24'/>`,
+[14,44,74,104].map(x=>U(x,30,34)).join('')+`<path ${B} d='M20 52H140'/>`+[27,57,87,117].map(x=>`<rect ${B} x='${x}' y='46' width='8' height='8' rx='1.5'/>`).join(''),
+[18,48,78,108].map(x=>U(x,34,34)).join('')+`<rect ${B} x='10' y='28' width='140' height='56' rx='18' fill='rgba(47,123,255,.08)'/>`,
+U(60,24,48)+`<circle cx='75' cy='48' r='2' fill='#c9d2e0'/><circle cx='93' cy='48' r='2' fill='#c9d2e0'/><path ${B} d='M75 57q9 8 18 0M124 22l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z'/>`,
+U(52,22,56)+`<path ${B} d='M114 28l8-10h16l8 10-16 18zM114 28h32M122 18l8 10 8-10'/>`,
+[14,60,106].map(x=>U(x,30,40)).join('')+`<path ${B} d='M34 30q46-26 92 0'/>`,
+`<path ${B} fill='rgba(47,123,255,.1)' d='M16 56q16-14 32 0t32 0t32 0t32 0v40H16z'/>`+U(52,8,56)
+];
+const IMG=[];
+// hero photos: add 1-3 file paths or URLs, e.g. const HERO=['clinic1.jpg','clinic2.jpg','clinic3.jpg'];
+const HERO=[];
+if(HERO.length){$('#hero').classList.add('photo');$$('.slide>div').forEach((d,i)=>d.style.backgroundImage=`url('${HERO[i%HERO.length]}')`)}
+const T=[['Dental Implants','Permanent tooth replacement that looks and feels natural.'],['Smile Designing','A planned smile shaped around your face.'],['Teeth Whitening','Visibly brighter teeth in a single visit.'],['Root Canal Treatment','Gentle care that saves the tooth and ends the pain.'],['Orthodontics','Braces that align teeth for the long term.'],['Clear Aligners','Nearly invisible straightening.'],['Pediatric Dentistry','Friendly, patient care for children.'],['Cosmetic Dentistry','Refined fixes for colour, shape and gaps.'],['Crowns & Bridges','Strong restorations that fit like your own teeth.'],['Gum Treatment','Healthy gums are the base of a healthy smile.']];
+$('#tgrid').innerHTML=T.map((t,i)=>`<article class="card tilt rv" style="--i:${i%4};--h:${205+i*7};--p:${20+i*7}%"><span class="glow"></span><div class="media"><i></i>${IMG[i]?`<img src='${IMG[i]}' alt='${t[0]}' loading='lazy'>`:`<svg class='art' viewBox='0 0 160 120' aria-hidden='true'>${ART[i]}</svg>`}</div><div class="body"><h3>${t[0].replace('&','&amp;')}</h3><p>${t[1]}</p></div></article>`).join('');
+$('#tsel').insertAdjacentHTML('beforeend',T.map(t=>`<option>${t[0].replace('&','&amp;')}</option>`).join(''));
+$('#gal').innerHTML=Array.from({length:8},(_,i)=>`<button class="rv" style="--i:${i%4};--h:${200+i*9}" aria-label="Open photo ${i+1}"><i></i></button>`).join('');
+// loader
+addEventListener('load',()=>setTimeout(()=>$('#load').classList.add('off'),900));
+setTimeout(()=>$('#load').classList.add('off'),3000);
+// reveal + counters
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -60px'});
+$$('.rv').forEach(el=>io.observe(el));
+const co=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;co.unobserve(e.target);const el=e.target,n=+el.dataset.n,s=el.dataset.s;
+if(matchMedia('(prefers-reduced-motion:reduce)').matches){el.textContent=n.toLocaleString()+s;return}
+let t0;const f=t=>{t0??=t;const p=Math.min((t-t0)/1800,1);el.textContent=Math.round(n*(1-Math.pow(1-p,4))).toLocaleString()+s;if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)}),{threshold:.6});
+$$('[data-n]').forEach(el=>co.observe(el));
+// hero slider
+let si=0;const sl=$$('.slide'),dt=$$('#dots button');
+const go=i=>{si=i;sl.forEach((s,k)=>s.classList.toggle('on',k==i));dt.forEach((d,k)=>d.classList.toggle('on',k==i))};
+dt.forEach((d,i)=>d.onclick=()=>go(i));
+if(!matchMedia('(prefers-reduced-motion:reduce)').matches)setInterval(()=>go((si+1)%sl.length),6500);
+// nav, top, menu
+const nav=$('#nav'),toTop=$('#top');
+addEventListener('scroll',()=>{nav.classList.toggle('s',scrollY>40);toTop.classList.toggle('on',scrollY>600)},{passive:true});
+toTop.onclick=()=>scrollTo({top:0,behavior:'smooth'});
+$('#burger').onclick=()=>$('#links').classList.toggle('open');
+$$('#links a').forEach(a=>a.onclick=()=>$('#links').classList.remove('open'));
+// lightbox
+const lb=$('#lb');
+$$('#gal button').forEach(b=>b.onclick=()=>{$('i',lb).style.cssText=`background:radial-gradient(80% 80% at 30% 25%,hsl(${b.style.getPropertyValue('--h')} 85% 55%/.6),transparent 70%),#0a1428`;lb.classList.add('on')});
+lb.onclick=e=>{if(e.target===lb||e.target.tagName=='BUTTON')lb.classList.remove('on')};
+addEventListener('keydown',e=>e.key=='Escape'&&lb.classList.remove('on'));
+// form (demo)
+$('#f').onsubmit=e=>{e.preventDefault();$('#ok').style.display='block'};
+// config: edit these
+const CONFIG={phone:'',whatsapp:'',reviewUrl:'',tz:'Asia/Kolkata',rating:4.9,count:120,
+hours:[null,[['09:00','18:00']],[['09:00','18:00']],[['09:00','18:00']],[['09:00','18:00']],[['09:00','18:00']],[['09:00','18:00']]]};
+const R=[{n:'Sample reviewer',t:'Sample review. Paste a real Google review here.',r:5},{n:'Sample reviewer',t:'Second sample review. Replace it with real patient feedback.',r:5},{n:'Sample reviewer',t:'Third sample review. Add more reviews to this list.',r:4}];
+if(CONFIG.phone)$$('[data-call]').forEach(a=>a.href='tel:'+CONFIG.phone);
+if(CONFIG.whatsapp)$('.wa').href=CONFIG.whatsapp;
+if(CONFIG.reviewUrl)$('#wr').href=CONFIG.reviewUrl;
+// hours (clinic time zone, live open/closed)
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const fmt=t=>{let[h,m]=t.split(':').map(Number);const a=h>=12?'PM':'AM';h=h%12||12;return h+':'+String(m).padStart(2,'0')+' '+a};
+const mins=t=>{const[h,m]=t.split(':').map(Number);return h*60+m};
+function clinicNow(){const p=new Intl.DateTimeFormat('en-US',{timeZone:CONFIG.tz,weekday:'long',hour:'numeric',minute:'numeric',hourCycle:'h23'}).formatToParts(new Date());const g=k=>p.find(x=>x.type===k).value;return{d:DAYS.indexOf(g('weekday')),min:+g('hour')*60+ +g('minute')}}
+function hours(){const n=clinicNow();
+$('#hl').innerHTML=DAYS.map((d,i)=>{const s=CONFIG.hours[i];return `<li class='${i===n.d?'today':''}'><span>${d}</span><span>${s?s.map(r=>fmt(r[0])+' – '+fmt(r[1])).join(', '):'Closed'}</span></li>`}).join('');
+const s=CONFIG.hours[n.d],open=s&&s.some(r=>n.min>=mins(r[0])&&n.min<mins(r[1]));
+$('#state').innerHTML=open?'<i class="pill on"></i>Open now':'<i class="pill"></i>Closed now'}
+hours();setInterval(hours,60000);
+// reviews carousel
+$('#avg').textContent=CONFIG.rating.toFixed(1);$('#stars').textContent='★'.repeat(Math.round(CONFIG.rating));
+$('#cnt').textContent='Based on '+CONFIG.count+' Google reviews (sample figures)';
+let ri=0,rt;
+const show=i=>{ri=(i+R.length)%R.length;const r=R[ri],c=$('#rc');c.style.animation='none';c.offsetWidth;c.style.animation='';c.innerHTML=`<div class='st'>${'★'.repeat(r.r)}</div><p>“${r.t}”</p><small>${r.n} · Google review</small>`};
+const auto=()=>{clearInterval(rt);if(!matchMedia('(prefers-reduced-motion:reduce)').matches)rt=setInterval(()=>show(ri+1),6000)};
+$('#rp').onclick=()=>{show(ri-1);auto()};$('#rn').onclick=()=>{show(ri+1);auto()};
+$('#rc').onmouseenter=()=>clearInterval(rt);$('#rc').onmouseleave=auto;
+show(0);auto();
+// fine-pointer effects
+if(fine){
+document.documentElement.classList.add('fx');
+const c=$('#cur');c.innerHTML='<i class="tr"></i>'.repeat(6)+'<i class="ring"></i><i class="dot"></i>';
+const tr=$$('.tr',c),ring=$('.ring',c),dot=$('.dot',c);
+const m={x:innerWidth/2,y:innerHeight/2},r={...m},P=tr.map(()=>({...m}));let hx=0,hy=0,cx=0,cy=0;
+tr.forEach((t,i)=>{t.style.opacity=.22-i*.03});dot.style.transform=`translate3d(${m.x}px,${m.y}px,0)`;
+addEventListener('mousemove',e=>{m.x=e.clientX;m.y=e.clientY;dot.style.transform=`translate3d(${m.x}px,${m.y}px,0)`;
+const s=e.target.closest('[data-spot]');if(s){const b=s.getBoundingClientRect();s.style.setProperty('--mx',e.clientX-b.left+'px');s.style.setProperty('--my',e.clientY-b.top+'px')}
+const hot=e.target.closest('a,button,input,select,textarea'),v=e.target.closest('.gal button,.media');
+ring.className='ring'+(hot?' hot':v?' view':'');hx=e.clientX/innerWidth-.5;hy=e.clientY/innerHeight-.5},{passive:true});
+const hero=$('#hero'),bgEl=$('#bg');
+(function tick(){r.x=lerp(r.x,m.x,.16);r.y=lerp(r.y,m.y,.16);ring.style.transform=`translate3d(${r.x}px,${r.y}px,0)`;
+let px=r.x,py=r.y;P.forEach((p,i)=>{p.x=lerp(p.x,px,.35);p.y=lerp(p.y,py,.35);px=p.x;py=p.y;tr[i].style.transform=`translate3d(${p.x}px,${p.y}px,0) scale(${1-i*.12})`});
+cx=lerp(cx,hx,.06);cy=lerp(cy,hy,.06);hero.style.setProperty('--hx',cx.toFixed(4));hero.style.setProperty('--hy',cy.toFixed(4));bgEl.style.setProperty('--gx',cx.toFixed(4));bgEl.style.setProperty('--gy',cy.toFixed(4));
+requestAnimationFrame(tick)})();
+// tilt
+$$('.card').forEach(el=>{
+el.addEventListener('mousemove',e=>{const b=el.getBoundingClientRect(),x=(e.clientX-b.left)/b.width,y=(e.clientY-b.top)/b.height;
+el.style.setProperty('--rx',(.5-y)*14+'deg');el.style.setProperty('--ry',(x-.5)*14+'deg');el.style.setProperty('--sx',x*100+'%');el.style.setProperty('--sy',y*100+'%');el.style.setProperty('--px',(x-.5)*10+'px');el.style.setProperty('--py',(y-.5)*10+'px')});
+el.addEventListener('mouseleave',()=>['--rx','--ry','--px','--py'].forEach(k=>el.style.setProperty(k,'0')))});
+// magnetic
+$$('.mag').forEach(el=>{let x=0,y=0,tx=0,ty=0,on=false,raf=null;
+const loop=()=>{x=lerp(x,tx,.18);y=lerp(y,ty,.18);el.style.transform=`translate3d(${x}px,${y}px,0)`;raf=(on||Math.abs(x)+Math.abs(y)>.05)?requestAnimationFrame(loop):null};
+addEventListener('mousemove',e=>{const b=el.getBoundingClientRect(),dx=e.clientX-(b.left+b.width/2),dy=e.clientY-(b.top+b.height/2);
+if(Math.hypot(dx,dy)<90+b.width/2){tx=dx*.3;ty=dy*.3;on=true}else if(on){tx=ty=0;on=false}if(!raf)raf=requestAnimationFrame(loop)},{passive:true})});
+}
+</script>
+</body>
+</html>
