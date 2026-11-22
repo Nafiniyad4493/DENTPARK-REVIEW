@@ -136,6 +136,13 @@ input:focus,select:focus,textarea:focus{outline:0;border-color:var(--blue);box-s
 footer{padding:44px 0 90px;border-top:1px solid rgba(201,210,224,.1);color:var(--mut);font-size:14px}
 footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 
+/* map */
+.map{height:380px;margin:34px 0 26px;border-radius:18px;overflow:hidden;border:1px solid rgba(201,210,224,.15);background:var(--navy2)}
+.map{position:relative}
+.mapfb{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;text-align:center;color:var(--silver);background-image:linear-gradient(rgba(201,210,224,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(201,210,224,.06) 1px,transparent 1px);background-size:40px 40px}
+.mapfb b{font:500 22px Newsreader,serif;color:#fff}
+.map iframe{position:relative;z-index:1;display:block;width:100%;height:100%;border:0;filter:invert(90%) hue-rotate(180deg) brightness(.9) contrast(.9)}
+
 /* hero dental scene */
 .tooth{display:none}
 .scene{position:absolute;right:7%;top:50%;width:min(44vw,560px);aspect-ratio:1;translate:0 -50%}
@@ -224,7 +231,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 
 <nav id="nav"><div class="wrap">
 <a href="#hero" class="logo">Dr. Salih’s <em>Dentpark</em></a>
-<div class="links" id="links"><a href="#treatments">Treatments</a><a href="#doctors">Doctors</a><a href="#gallery">Gallery</a><a href="#hours">Hours</a><a href="#reviews">Reviews</a><a href="#book">Appointment</a></div>
+<div class="links" id="links"><a href="#treatments">Treatments</a><a href="#doctors">Doctors</a><a href="#gallery">Gallery</a><a href="#hours">Hours</a><a href="#visit">Location</a><a href="#reviews">Reviews</a><a href="#book">Appointment</a></div>
 <span class="mag"><a class="btn ghost" data-call href="#book">Call</a></span><span class="mag"><a class="btn d" href="#book">Book now</a></span>
 <button class="burger" id="burger" aria-label="Menu">≡</button>
 </div></nav>
@@ -290,12 +297,19 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 <ul id="hl" class="rv" style="--i:2"></ul>
 </div><div class="wrap note">Placeholder hours. Edit CONFIG.hours in the script to match the clinic.</div></section>
 
+<section id="visit"><div class="wrap">
+<h2 class="rv">Find us.</h2>
+<p class="lead rv" style="--i:1">Dr. Salih’s Dentpark Dental Care, Poonoor.</p>
+<div class="map rv" style="--i:2"><div class="mapfb"><svg viewBox="0 0 40 56" width="38" fill="none" stroke="#2f7bff" stroke-width="2" aria-hidden="true"><path d="M20 54C20 54 4 34 4 20a16 16 0 0132 0c0 14-16 34-16 34z"/><circle cx="20" cy="20" r="6"/></svg><b>Dr. Salih’s Dentpark Dental Care</b><span>Poonoor</span><button class="btn ghost" id="showmap" type="button">Show map here</button></div></div>
+<span class="mag"><a class="btn" target="_blank" rel="noopener noreferrer" href="https://maps.app.goo.gl/ftxsaaJmrVbvWUhw6?g_st=iw">Open in Google Maps</a></span>
+</div></section>
+
 <section id="reviews" data-spot><div class="wrap">
 <h2 class="rv">What patients say.</h2>
 <div class="sum rv" style="--i:1"><b id="avg"></b><span id="stars"></span><small id="cnt"></small></div>
 <div class="rvw rv" style="--i:2"><article id="rc"></article><div class="rnav"><button id="rp" aria-label="Previous review">←</button><button id="rn" aria-label="Next review">→</button></div></div>
 <span class="mag"><a class="btn ghost" id="wr" target="_blank" rel="noopener noreferrer" href="#reviews">Write a review on Google</a></span>
-<p class="note">Sample rating and reviews. Replace them in the script with real ones.</p>
+<p class="note">Reviews from our Google Maps listing.</p>
 </div></section>
 
 <section id="book" data-spot><div class="wrap book">
@@ -311,7 +325,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 </form>
 </div></section>
 
-<footer><div class="wrap"><span>© Dr. Salih’s Dentpark</span><span>Address and phone: add clinic details here</span></div></footer>
+<footer><div class="wrap"><span>© Dr. Salih’s Dentpark</span><a href="https://maps.app.goo.gl/ftxsaaJmrVbvWUhw6?g_st=iw" target="_blank" rel="noopener noreferrer">Poonoor · View on Google Maps</a></div></footer>
 
 <div id="lb" role="dialog" aria-modal="true"><button aria-label="Close">×</button><i></i></div>
 <div class="fl"><button class="fab" id="top" aria-label="Back to top">↑</button><a class="fab call-fab" data-call href="#book">Call</a><a class="fab wa" href="#" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">WhatsApp</a></div>
@@ -375,9 +389,9 @@ addEventListener('keydown',e=>e.key=='Escape'&&lb.classList.remove('on'));
 // form (demo)
 $('#f').onsubmit=e=>{e.preventDefault();$('#ok').style.display='block'};
 // config: edit these
-const CONFIG={phone:'',whatsapp:'',reviewUrl:'',tz:'Asia/Kolkata',rating:4.9,count:120,
+const CONFIG={phone:'',whatsapp:'',reviewUrl:'https://www.google.com/search?q=dr+salih+dental+clinic+poonoor',tz:'Asia/Kolkata',rating:null,count:null,
 hours:[null,[['09:00','18:00']],[['09:00','18:00']],[['09:00','18:00']],[['09:00','18:00']],[['09:00','18:00']],[['09:00','18:00']]]};
-const R=[{n:'Sample reviewer',t:'Sample review. Paste a real Google review here.',r:5},{n:'Sample reviewer',t:'Second sample review. Replace it with real patient feedback.',r:5},{n:'Sample reviewer',t:'Third sample review. Add more reviews to this list.',r:4}];
+const R=[{n:'Arshana Muhazen',t:`I had an excellent experience with my composite filling and dental crown treatment. The entire procedure was carried out with exceptional professionalism, and Doctor Salih took the time to explain each step, ensuring I was comfortable throughout. The composite filling blends seamlessly with my natural teeth, and the crown fits perfectly, providing both a natural appearance and excellent functionality. I am extremely satisfied with the quality of care and the final results, and I would highly recommend this clinic to anyone seeking high-quality dental treatment😊 👍🏼`,r:5},{n:'Muhammed Mubashir',t:`Excellent dental treatment and friendly staff! I had a root canal, two dental crowns fixed, and teeth cleaning. The doctor was professional, caring, and attentive throughout the treatment. Highly satisfied with the service. Highly recommended! 😊`,r:5},{n:'Shahana Vk',t:`I would recommend this place 10/10 to anybody. The doctor and staff there is really good. Everything was explained to me in detail. I got a root canal treatment done and it was very painless and neatly done with all advanced tools and equipments. I'm happy with the service provided.`,r:5},{n:'Sanath',t:`I took root canal treatment and crown fixing from Dr. Salih.The service was professional and comfortable. I am very happy with the care and result. Highly recommended`,r:5},{n:'Rinsha Fathima',t:`Iam extremely satisfied with the treatment i received at doctor salih dental clinic`,r:5}];
 if(CONFIG.phone)$$('[data-call]').forEach(a=>a.href='tel:'+CONFIG.phone);
 if(CONFIG.whatsapp)$('.wa').href=CONFIG.whatsapp;
 if(CONFIG.reviewUrl)$('#wr').href=CONFIG.reviewUrl;
@@ -392,14 +406,15 @@ const s=CONFIG.hours[n.d],open=s&&s.some(r=>n.min>=mins(r[0])&&n.min<mins(r[1]))
 $('#state').innerHTML=open?'<i class="pill on"></i>Open now':'<i class="pill"></i>Closed now'}
 hours();setInterval(hours,60000);
 // reviews carousel
-$('#avg').textContent=CONFIG.rating.toFixed(1);$('#stars').textContent='★'.repeat(Math.round(CONFIG.rating));
-$('#cnt').textContent='Based on '+CONFIG.count+' Google reviews (sample figures)';
+if(CONFIG.rating){$('#avg').textContent=CONFIG.rating.toFixed(1);$('#stars').textContent='★'.repeat(Math.round(CONFIG.rating))}
+$('#cnt').textContent=CONFIG.rating&&CONFIG.count?'Based on '+CONFIG.count+' Google reviews':'Real reviews from our patients on Google';
 let ri=0,rt;
 const show=i=>{ri=(i+R.length)%R.length;const r=R[ri],c=$('#rc');c.style.animation='none';c.offsetWidth;c.style.animation='';c.innerHTML=`<div class='st'>${'★'.repeat(r.r)}</div><p>“${r.t}”</p><small>${r.n} · Google review</small>`};
 const auto=()=>{clearInterval(rt);if(!matchMedia('(prefers-reduced-motion:reduce)').matches)rt=setInterval(()=>show(ri+1),6000)};
 $('#rp').onclick=()=>{show(ri-1);auto()};$('#rn').onclick=()=>{show(ri+1);auto()};
 $('#rc').onmouseenter=()=>clearInterval(rt);$('#rc').onmouseleave=auto;
 show(0);auto();
+$('#showmap').onclick=()=>{const f=document.createElement('iframe');f.title='Clinic location on Google Maps';f.referrerPolicy='no-referrer-when-downgrade';f.src='https://www.google.com/maps?q=Dr+salihs+DENTPARK+DENTAL+CARE+Poonoor&output=embed';$('.map').appendChild(f)};
 // fine-pointer effects
 if(fine){
 document.documentElement.classList.add('fx');
